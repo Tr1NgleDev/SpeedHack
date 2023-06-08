@@ -60,7 +60,10 @@ void __fastcall Player_renderHud_H(Player* self, GLFWwindow* window)
 	str << "Speed:" << std::setprecision(3) << speed;
 	speedText->setText(str.str());
 	speedText->updateModel();
+
+	glDepthMask(0);
 	speedText->render();
+	glDepthMask(1);
 }
 const Shader* fontShader;
 const Tex2D* fontTex;
@@ -94,13 +97,13 @@ DWORD WINAPI Main_Thread(void* hModule)
 	FILE* fp;
 	freopen_s(&fp, "CONOUT$", "w", stdout);
 #endif
-	Hook(reinterpret_cast<void*>(base + idaOffsetFix(0x7EB40)), reinterpret_cast<void*>(&Player_update_H), reinterpret_cast<void**>(&Player_update));
-	Hook(reinterpret_cast<void*>(base + idaOffsetFix(0x81880)), reinterpret_cast<void*>(&Player_keyInput_H), reinterpret_cast<void**>(&Player_keyInput));
-	Hook(reinterpret_cast<void*>(base + idaOffsetFix(0x53770)), reinterpret_cast<void*>(&GameState_scrollInput_H), reinterpret_cast<void**>(&GameState_scrollInput));
-	Hook(reinterpret_cast<void*>(base + idaOffsetFix(0x53870)), reinterpret_cast<void*>(&GameState_mouseButtonInput_H), reinterpret_cast<void**>(&GameState_mouseButtonInput));
+	Hook(reinterpret_cast<void*>(FUNC_PLAYER_UPDATE), reinterpret_cast<void*>(&Player_update_H), reinterpret_cast<void**>(&Player_update));
+	Hook(reinterpret_cast<void*>(FUNC_PLAYER_KEYINPUT), reinterpret_cast<void*>(&Player_keyInput_H), reinterpret_cast<void**>(&Player_keyInput));
+	Hook(reinterpret_cast<void*>(FUNC_GAMESTATE_SCROLLINPUT), reinterpret_cast<void*>(&GameState_scrollInput_H), reinterpret_cast<void**>(&GameState_scrollInput));
+	Hook(reinterpret_cast<void*>(FUNC_GAMESTATE_MOUSEBUTTONINPUT), reinterpret_cast<void*>(&GameState_mouseButtonInput_H), reinterpret_cast<void**>(&GameState_mouseButtonInput));
 	
-	Hook(reinterpret_cast<void*>(base + idaOffsetFix(0x7C6A0)), reinterpret_cast<void*>(&Player_renderHud_H), reinterpret_cast<void**>(&Player_renderHud));
-	Hook(reinterpret_cast<void*>(base + idaOffsetFix(0x50690)), reinterpret_cast<void*>(&GameState_init_H), reinterpret_cast<void**>(&GameState_init));
+	Hook(reinterpret_cast<void*>(FUNC_PLAYER_RENDERHUD), reinterpret_cast<void*>(&Player_renderHud_H), reinterpret_cast<void**>(&Player_renderHud));
+	Hook(reinterpret_cast<void*>(FUNC_GAMESTATE_INIT), reinterpret_cast<void*>(&GameState_init_H), reinterpret_cast<void**>(&GameState_init));
 	
 	EnableHook(0);
 	return true;
